@@ -33,6 +33,11 @@ public class UserController {
        return  service.findAllUsers().thenApply(ResponseEntity::ok);
     }
 
+    @GetMapping("/asyncexception")
+    public CompletableFuture<ResponseEntity> findUserById(){
+        return service.findUserById(10).thenApply(ResponseEntity::ok);
+    }
+
 
     @GetMapping(value = "/getUsersByThread", produces = "application/json")
     public  ResponseEntity getUsers(){
