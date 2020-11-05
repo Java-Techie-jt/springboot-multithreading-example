@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -35,11 +36,20 @@ public class UserService {
         logger.info("Total time {}", (end - start));
         return CompletableFuture.completedFuture(users);
     }
+
     @Async
     public CompletableFuture<List<User>> findAllUsers(){
         logger.info("get list of user by "+Thread.currentThread().getName());
         List<User> users=repository.findAll();
         return CompletableFuture.completedFuture(users);
+    }
+
+    @Async
+    public CompletableFuture<Optional<User>> findUserById(int id){
+        logger.info("get user by id "+Thread.currentThread().getName());
+        //generate exception
+        System.out.println(10/0);
+        return CompletableFuture.completedFuture(repository.findById(id));
     }
 
     private List<User> parseCSVFile(final MultipartFile file) throws Exception {
