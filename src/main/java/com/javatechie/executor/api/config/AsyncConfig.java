@@ -1,6 +1,5 @@
 package com.javatechie.executor.api.config;
 
-import com.javatechie.executor.api.exception.AsyncExceptionHandler;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,23 +11,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.Executor;
 
 @Configuration
-public class AsyncConfig extends AsyncConfigurerSupport {
+@EnableAsync
+public class AsyncConfig {
 
-    @Autowired
-    private AsyncExceptionHandler asyncExceptionHandler;
-
-    @Override
+    @Bean(name="taskExecuter")
     public Executor getAsyncExecutor() {
-        return taskExecutor();
-    }
 
-    @Override
-    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return asyncExceptionHandler;
-    }
-
-    //@Bean(name ="taskExecutor")
-    public Executor taskExecutor(){
         ThreadPoolTaskExecutor executor=new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(2);
         executor.setMaxPoolSize(2);
@@ -37,6 +25,5 @@ public class AsyncConfig extends AsyncConfigurerSupport {
         executor.initialize();
         return executor;
     }
-
 
 }

@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 @RestController
 public class UserController {
@@ -29,15 +31,25 @@ public class UserController {
     }
 
     @GetMapping(value = "/users", produces = "application/json")
-    public CompletableFuture<ResponseEntity> findAllUsers() {
-       return  service.findAllUsers().thenApply(ResponseEntity::ok);
+    public CompletableFuture<ResponseEntity<List<User>>> findAllUsers() {
+       return  service.findAllUsers().thenApply(ResponseEntity::ok)
+               .exceptionally(handleGetAllUserFailure);
     }
+    private static Function<Throwable, ? extends ResponseEntity<List<User>>> handleGetAllUserFailure = throwable -> {
+        System.out.println("error is:"+throwable);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    };
 
     @GetMapping("/asyncexception")
-    public CompletableFuture<ResponseEntity> findUserById(){
-        return service.findUserById(10).thenApply(ResponseEntity::ok);
+    public CompletableFuture<ResponseEntity<Optional<User>>> findUserById(){
+        return service.findUserById(10).thenApply(ResponseEntity::ok).
+                exceptionally( handleGetUserFailure);
     }
 
+    private static Function<Throwable, ? extends ResponseEntity<Optional<User>>> handleGetUserFailure = throwable -> {
+        System.out.println("error is:"+throwable);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    };
 
     @GetMapping(value = "/getUsersByThread", produces = "application/json")
     public  ResponseEntity getUsers(){
